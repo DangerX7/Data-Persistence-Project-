@@ -6,11 +6,12 @@ using UnityEngine.UI;
 
 public class MainManager : MonoBehaviour
 {
+    private GameManager Manager;
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
 
-    public Text ScoreText;
+    public Text ScoreText, HighScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -35,6 +36,12 @@ public class MainManager : MonoBehaviour
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
             }
+        }
+        if (GameObject.Find("Game Manager") != null)
+        {
+            Manager = GameObject.Find("Game Manager").GetComponent<GameManager>();
+
+            HighScoreText.text = "Best Score : " + Manager.playerRecordName + " " + Manager.highScore;
         }
     }
 
@@ -70,7 +77,63 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        if (m_Points > Manager.highScore5 && m_Points < Manager.highScore4)
+        {
+            Manager.highScore5 = m_Points;
+            Manager.playerRecordName5 = Manager.playerName;
+        }
+        else if (m_Points > Manager.highScore4 && m_Points < Manager.highScore3)
+        {
+            Manager.highScore5 = Manager.highScore4;
+            Manager.playerRecordName5 = Manager.playerRecordName4;
+
+            Manager.highScore4 = m_Points;
+            Manager.playerRecordName4 = Manager.playerName;
+        }
+        else if (m_Points > Manager.highScore3 && m_Points < Manager.highScore2)
+        {
+            Manager.highScore5 = Manager.highScore4;
+            Manager.playerRecordName5 = Manager.playerRecordName4;
+            Manager.highScore4 = Manager.highScore3;
+            Manager.playerRecordName4 = Manager.playerRecordName3;
+
+            Manager.highScore3 = m_Points;
+            Manager.playerRecordName3 = Manager.playerName;
+        }
+        else if (m_Points > Manager.highScore2 && m_Points < Manager.highScore)
+        {
+            Manager.highScore5 = Manager.highScore4;
+            Manager.playerRecordName5 = Manager.playerRecordName4;
+            Manager.highScore4 = Manager.highScore3;
+            Manager.playerRecordName4 = Manager.playerRecordName3;
+            Manager.highScore3 = Manager.highScore2;
+            Manager.playerRecordName3 = Manager.playerRecordName2;
+
+            Manager.highScore2 = m_Points;
+            Manager.playerRecordName2 = Manager.playerName;
+        }
+        else if (m_Points > Manager.highScore)
+        {
+            Manager.highScore5 = Manager.highScore4;
+            Manager.playerRecordName5 = Manager.playerRecordName4;
+            Manager.highScore4 = Manager.highScore3;
+            Manager.playerRecordName4 = Manager.playerRecordName3;
+            Manager.highScore3 = Manager.highScore2;
+            Manager.playerRecordName3 = Manager.playerRecordName2;
+            Manager.highScore2 = Manager.highScore;
+            Manager.playerRecordName2 = Manager.playerRecordName;
+
+            Manager.highScore = m_Points;
+            Manager.playerRecordName = Manager.playerName;
+        }
+        Manager.SaveScore();
+        Debug.Log("highscore " + Manager.highScore);
+      //  Debug.Log("points " + m_Points);
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene(1);
     }
 }
